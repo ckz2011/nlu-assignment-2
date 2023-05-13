@@ -7,19 +7,6 @@ nlp = spacy.load("en_core_web_sm")
 
 print("Welcome to Chatbot")
 
-# doc = nlp("Apple is looking for buying U.K startup 100 Billion")
-
-
-# text = ("Where was CoryLody Educated at? Educated_At")
-# doc = nlp(text)
-
-# print("Noun phrases:", [chunk.text for chunk in doc.noun_chunks])
-# print("Verbs:", [token.lemma_ for token in doc if token.pos_ == "VERB"])
-
-# for entity in doc.ents:
-#     print(entity.text, entity.label_)
-
-
 driver = GraphDatabase.driver("bolt://localhost:7687", auth = ("neo4j", "murari1200096"))
 print(driver)
 
@@ -48,7 +35,7 @@ def get_answer(question):
         return "Hi Couldn't understand the Question. Please try with another question. eg: Where was John educated at?"
     
     with driver.session() as session:
-        if "educate" in question or "educated" in question:
+        if "educate" in question or "educated" in question or "study" in question:
             print("We have educated or educate in Question")
             query_template = "MATCH (p:Person {name: '$person_name'})-[:EDUCATED_AT]->(u:University) RETURN u.name"
             # Replace $person_name with the actual name you want to search for
@@ -59,7 +46,9 @@ def get_answer(question):
                 return f"No information found for the person '{person_name}'"
             for record in result:
                 print(record)
-                return f"The university of '{person_name}' is: {record['u.name']}"
+                if record['u.name'] != "where":
+                    return f"The university of '{person_name}' is: {record['u.name']}"
+            return f"The university of '{person_name}' couldn't be determined explicity"
         else:
             return "Hi Couldn't understand the Question. Please try with another question. eg: Where was John educated at?"
 
