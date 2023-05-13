@@ -52,7 +52,7 @@ def get_answer(question):
             print("We have educated or educate in Question")
             query_template = "MATCH (p:Person {name: '$person_name'})-[:EDUCATED_AT]->(u:University) RETURN u.name"
             # Replace $person_name with the actual name you want to search for
-            query = query_template.replace("$person_name", 'Bekish')
+            query = query_template.replace("$person_name", person_name)
             print("Query > " , query)
             result = session.run(query)
             if result.peek() is None:
